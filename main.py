@@ -1,9 +1,16 @@
 import streamlit as st
-from pycaret.classification import * 
-#import pickle
+import pickle
+import pandas as pd
+
+def classify(data):
+  if data == 0:
+    return 'Iris-setosa'
+  if data == 1:
+    return 'Iris-versicolor'
+  return 'Iris-virginica'
 
 
-gbc_model = load_model('gbc')
+model = pickle.load(open('bestmodel.sav', 'rb'))
 
 st.title("Iris classifier")
 
@@ -12,17 +19,8 @@ b = float(st.number_input("sepal width in cm"))
 c = float(st.number_input("petal length in cm"))
 d = float(st.number_input("petal width in cm"))
 
-inputs = [[a,b,c,d]]
+input_dict = {'PetalLengthCm' : a, 'PetalWidthCm' : b, 'SepalLengthCm' : c, 'SepalWidthCm' : d}
+input_df = pd.DataFrame([input_dict])
 
-input2 = [[5,4,1.7,0.4]]
-
-pred = predict_model(gbc_model,data=input2)
-print(pred)
-
-
-#if st.button("Classify"):
-  #st.success(classify((gbc_model.predict(inputs))))
-  #result = predict
-  #pass
-
-
+if st.button("Classify"):
+  st.success(classify(model.predict(input_df)[0]))
